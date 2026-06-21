@@ -1,12 +1,12 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ft_split.c                                         :+:      :+:    :+:   */
+/*   ft_split_x.c                                       :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: francisa <marvin@42.fr>                    +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2026/06/09 11:21:04 by francisa          #+#    #+#             */
-/*   Updated: 2026/06/09 11:21:07 by francisa         ###   ########.fr       */
+/*   Created: 2026/06/21 11:17:49 by francisa          #+#    #+#             */
+/*   Updated: 2026/06/21 11:17:51 by francisa         ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ static char	*ft_genwords(char const *s, size_t start, size_t count_letter)
 	return (wptr);
 }
 
-static void	ft_putwords(char const *s, char c, char **sptr)
+static int	ft_putwords(char const *s, char c, char **sptr)
 {
 	size_t	i;
 	size_t	start;
@@ -78,7 +78,6 @@ static void	ft_putwords(char const *s, char c, char **sptr)
 
 	i = 0;
 	k = 0;
-	count_letter = 0;
 	while (i < ft_strlen(s))
 	{
 		while (s[i] == c)
@@ -89,22 +88,35 @@ static void	ft_putwords(char const *s, char c, char **sptr)
 		if (count_letter > 0)
 		{
 			sptr[k] = ft_genwords(s, start, count_letter);
+			if (!sptr[k])
+				return (0);
 			k++;
-			count_letter = 0;
 		}
 	}
 	sptr[k] = NULL;
+	return (1);
 }
 
 char	**ft_split(char const *s, char c)
 {
 	char	**sptr;
+	size_t	i;
 
 	if (!s)
 		return (NULL);
 	sptr = malloc((ft_countwords(s, c) + 1) * sizeof(char *));
 	if (!sptr)
 		return (NULL);
-	ft_putwords(s, c, sptr);
+	if (!ft_putwords(s, c, sptr))
+	{
+		i = 0;
+		while (sptr[i])
+		{
+			free(sptr[i]);
+			i++;
+		}
+		free(sptr);
+		return (NULL);
+	}
 	return (sptr);
 }
